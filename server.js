@@ -13,9 +13,6 @@ app.set("view engine", "ejs");
 
 app.use('/assets', express.static(path.join(__dirname, '/assets')))
 
-app.use(logger()); 
-
-
 app.use(
   session({
     secret: uuidv4(), 
@@ -27,6 +24,7 @@ app.use(
 app.use("/route", router);
 
 app.get("/", (req, res) => {
+  console.log(req.session)
   if (req.session.user) {
     res.redirect("/home");
   } else {
@@ -35,6 +33,8 @@ app.get("/", (req, res) => {
 });
 
 app.get("/home", (req, res) => {
+  console.log(req.session)
+
   if (req.session.user) {
     res.render("pages/home");
   } else {
@@ -42,7 +42,7 @@ app.get("/home", (req, res) => {
   }
 });
 
-app.post("/logout", logger, (req, res) => {
+app.post("/logout", (req, res) => {
   req.session.destroy(function (err) {
     if (err) {
       console.log(err);
@@ -53,11 +53,6 @@ app.post("/logout", logger, (req, res) => {
     }
   });
 });
-
-function logger(req, res, next) {
-  console.log(Date.now());
-  next();
-}
 
 app.listen(8080, function () {
   console.log("server is running on port 8080");
